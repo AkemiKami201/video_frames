@@ -6,6 +6,7 @@ import threading
 from pydub import AudioSegment
 import pyaudio
 import numpy as np
+import os
 from video_to_frames import FrameCapture
 
 class VideoPlayer:
@@ -15,11 +16,11 @@ class VideoPlayer:
         self.root.geometry("1270x720")
         self.root.bind("<Configure>", self.resize_video)
 
-        # Frame para los controles
+        # Framework for controls
         control_frame = tk.Frame(self.root)
         control_frame.pack()
 
-        # Botones de control
+        # Control buttons
         self.open_button = tk.Button(control_frame, text="Abrir Video", command=self.open_file)
         self.open_button.grid(row=0, column=0, padx=5)
 
@@ -31,15 +32,12 @@ class VideoPlayer:
 
         self.skip_button = tk.Button(control_frame, text="Adelantar 10s", command=self.skip_forward, state="disabled")
         self.skip_button.grid(row=0, column=3, padx=5)
-        
-        self.button_frame = tk.Button(control_frame, text="Crear Frames", command=FrameCapture, state="disabled")
-        self.button_frame.grid(row=0, column=4, padx=5)
 
-        # Label donde se muestra el video
+        # Label where the video is displaye
         self.label = tk.Label(self.root)
         self.label.pack(fill=tk.BOTH, expand=True)
 
-        # Variables para el video y audio
+        # Variables for video and audio
         self.cap = None
         self.stop = False
         self.paused = False
@@ -51,10 +49,10 @@ class VideoPlayer:
         self.frame_height = 480
         
     def open_file(self):
-        # Selección del archivo
+        # select the file
         file_path = filedialog.askopenfilename(filetypes=[("Archivos de video", "*.mp4 *.avi *.mov *.mkv")])
         if file_path:
-            # Detener cualquier reproducción actual
+            # Stop any current playback
             self.stop_video()
             self.cap = cv2.VideoCapture(file_path)
             self.audio = AudioSegment.from_file(file_path)
@@ -63,18 +61,19 @@ class VideoPlayer:
             self.stop = False
             self.paused = False
 
-            # Activar los botones de control
+            # Activate the control buttons
             self.play_pause_button.config(state="normal", text="Pausar")
             self.stop_button.config(state="normal")
             self.skip_button.config(state="normal")
-            self.button_frame.config(state="normal")
-
-            # Iniciar los hilos de video y audio
+                        
+            # Start the video, audio and frame capture threads
             self.video_thread = threading.Thread(target=self.play_video)
             self.audio_thread = threading.Thread(target=self.play_audio)
+            self.frame_thread = threading.Thread(target=FrameCapture, args=(file_path,))
             self.video_thread.start()
             self.audio_thread.start()
-
+            self.frame_thread.start()
+            
     def play_video(self):
         while not self.stop and self.cap.isOpened():
             if self.paused:
@@ -91,7 +90,7 @@ class VideoPlayer:
 
             self.label.config(image=photo)
             self.label.image = photo
-            self.label.after(3)
+            self.label.after(1)
 
         self.cap.release()
 
@@ -102,7 +101,7 @@ class VideoPlayer:
                                    rate=self.audio.frame_rate,
                                    output=True)
         
-        # Convertir audio a bytes y reproducir
+        # Convert audio to bytes and play
         audio_data = np.array(self.audio.get_array_of_samples())
         self.audio_stream.write(audio_data.tobytes())
         self.audio_stream.stop_stream()
@@ -110,7 +109,6 @@ class VideoPlayer:
         p.terminate()
         
     def toggle_play_pause(self):
-        # 
         self.paused = not self.paused
         if self.paused:
             self.play_pause_button.config(text="Reanudar")
@@ -129,15 +127,16 @@ class VideoPlayer:
         self.play_pause_button.config(state="disabled", text="Pausar")
         self.stop_button.config(state="disabled")
         self.skip_button.config(state="disabled")
-        self.button_frame.config(state="active")
 
     def skip_forward(self):
         if self.cap:
-            current_pos = self.cap.get(cv2.CAP_PROP_POS_MSEC)  # Obtener posición actual en milisegundos
-            self.cap.set(cv2.CAP_PROP_POS_MSEC, current_pos + 10000)  # Adelantar 10 segundos
+            # Get current position in milliseconds
+            current_pos = self.cap.get(cv2.CAP_PROP_POS_MSEC)
+            # Fast forward 5 seconds
+            self.cap.set(cv2.CAP_PROP_POS_MSEC, current_pos + 5000)
 
     def resize_video(self, event):
-        # Función para actualizar el tamaño del video en función del tamaño de la ventana
+        # Function to update video size based on window size
         self.frame_width = event.width
         self.frame_height = event.height
 
@@ -145,7 +144,7 @@ class VideoPlayer:
         self.stop_video()
         self.root.destroy()
 
-# Configurar la ventana principal
+# Setting up the main window
 root = tk.Tk()
 app = VideoPlayer(root)
 root.protocol("WM_DELETE_WINDOW", app.on_closing)
