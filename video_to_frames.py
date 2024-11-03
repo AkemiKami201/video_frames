@@ -1,21 +1,19 @@
 import cv2
+import os
  
-def FrameCapture(): 
-    
-    vidObj = cv2.VideoCapture() 
-    
+ # Create frames folder if it dont't exist
+if not os.path.exists("frames"):
+    os.makedirs("frames")
+
+def FrameCapture(video_path): 
+    vidObj = cv2.VideoCapture(video_path) 
     count = 0
-    
     success = 1
   
-    while success: 
+    while success:
 
         success, image = vidObj.read() 
-  
-        cv2.imwrite("frames%d.jpg" % count, image)
-  
-        count += 1
-            
-# if __name__ == '__main__': 
-
-#     FrameCapture("bad_apple.mp4")
+        
+        if success:
+            cv2.imwrite("frames/frame%d.jpg" %count, image)
+            count += 1
