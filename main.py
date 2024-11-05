@@ -33,7 +33,7 @@ class VideoPlayer:
         self.skip_button = tk.Button(control_frame, text="Adelantar 10s", command=self.skip_forward, state="disabled")
         self.skip_button.grid(row=0, column=3, padx=5)
 
-        # Label where the video is displaye
+        # Label where the video is display
         self.label = tk.Label(self.root)
         self.label.pack(fill=tk.BOTH, expand=True)
 
