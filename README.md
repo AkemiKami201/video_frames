@@ -2,7 +2,10 @@
 
 ### Description:
 
-A simple application to extract frames from any video.
+Program that capture frame per frame from any video
+
+> _**Careful if the video is long**_
+
 
 ### Example:
 
