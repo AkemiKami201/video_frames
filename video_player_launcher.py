@@ -1,3 +1,9 @@
+"""
+-| 
+-| Code by Akemi201
+-| 
+"""
+
 import subprocess
 import platform
 import os

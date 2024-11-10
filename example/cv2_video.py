@@ -1,5 +1,7 @@
 '''
-this code use cv2 for extract frames, but is not finished yet
+
+-| this code use cv2 for extract frames, but is not finished yet
+
 '''
 
 import tkinter
