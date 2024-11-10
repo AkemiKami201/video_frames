@@ -13,6 +13,6 @@ def launch_video(video_path):
         elif platform.system() == "Darwin":  # macOS
             subprocess.call(["open", video_path])
         else:  # Linux
-            subprocess.call(["xdg-open", video_path])  # Open with default player on Linux
+            subprocess.call(["mpv", video_path])  # Open with default (xdg-open) player on Linux
     except Exception as e:
         print(f"Error al abrir el archivo de video: {e}")
