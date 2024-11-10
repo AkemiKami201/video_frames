@@ -1,7 +1,9 @@
-'''
-using cv2 and numpy to play video, but it's not good
-so don't use this
-'''
+"""
+-|
+-| using cv2 and numpy to play video, but it's not good
+-| so don't use this
+-|
+"""
 
 import tkinter as tk
 from tkinter import filedialog
