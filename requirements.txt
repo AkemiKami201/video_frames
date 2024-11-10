@@ -1,9 +1,12 @@
 av==13.1.0
+customtkinter==5.2.2
+darkdetect==0.8.0
 gst==0.1.0
 imageio==2.36.0
 imageio-ffmpeg==0.5.1
 numpy==2.1.2
 opencv-python==4.10.0.84
+packaging==24.2
 pillow==11.0.0
 PyAudio==0.2.14
 pycairo==1.27.0
